@@ -1,0 +1,22 @@
+{
+  "version": "2.0",
+  "routeKey": "POST /todos/{userID}",
+  "rawPath": "/dev/todo@user.com/todos",
+  "rawQueryString": "",
+  "headers": {
+    "content-type": "application/json",
+    "authorization": "FAKE-JWT-TOKEN-FOR-LOCAL-TEST",
+    "origin": "http://127.0.0.1:5500"
+  },
+  "requestContext": {
+    "http": {
+      "method": "POST",
+      "path": "/dev/todo@user.com/todos"
+    }
+  },
+  "pathParameters": {
+    "userID": "todo@user.com"
+  },
+  "body": "{\"title\":\"Learn AWS SAM\",\"description\":\"Start backend deployment\",\"dateDue\":\"2025-12-31\"}",
+  "isBase64Encoded": false
+}

@@ -1,0 +1,203 @@
+# đang để trông bucket và todofiles table để test xoá todo
+
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: "stack for project main service"
+
+Globals:
+  Function:
+    Runtime: python3.12
+    Timeout: 10
+    MemorySize: 128
+
+Parameters:
+  AllowedOriginParam:
+    Type: String
+    Default: "https://d2wjdko2jskle3.cloudfront.net" # Localhost for testing
+  # database table names
+  TodosTableName:
+    Type: String
+  FilesTableName:
+    Type: String
+  FilesBucketName:
+    Type: String
+  # cognito user pool id and client id
+  SharedUserPoolId:
+    Type: String
+  SharedUserPoolClientId:
+    Type: String
+
+Resources:
+
+  ##############################################################
+  # HTTP API WITH COGNITO JWT AUTHORIZER
+  ##############################################################
+  MainHttpApi:
+    Type: AWS::Serverless::HttpApi
+    Properties:
+      StageName: dev
+
+      Auth:
+        Authorizers:
+          CognitoJwtAuthorizer:
+            IdentitySource: "$request.header.Authorization"
+            JwtConfiguration:
+              issuer: !Sub "https://cognito-idp.${AWS::Region}.amazonaws.com/${SharedUserPoolId}"
+              audience:
+                - !Ref SharedUserPoolClientId
+        DefaultAuthorizer: CognitoJwtAuthorizer
+
+      CorsConfiguration:
+        AllowMethods:
+          - GET
+          - POST
+          - PUT
+          - DELETE
+          - HEAD
+        AllowOrigins:
+          - !Ref AllowedOriginParam # Localhost for testing
+        AllowHeaders:
+          - "*"
+
+  ##############################################################
+  # GET TODOS   (GET /{userID}/todos)
+  ##############################################################
+  GetTodosFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: getTodos.lambda_handler
+      CodeUri: functions/
+      Role: arn:aws:iam::760022212648:role/TodoAppLambdaRole
+      Environment:
+        Variables:
+          TODO_TABLE: !Ref TodosTableName
+          ALLOWED_ORIGIN: !Ref AllowedOriginParam
+      Events:
+        GetTodosApi:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref MainHttpApi
+            Path: /{userID}/todos
+            Method: GET
+      
+
+  ##############################################################
+  # GET ONE TODO  (GET /{userID}/todos/{todoID})
+  ##############################################################
+  GetTodoFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: getTodo.lambda_handler
+      CodeUri: functions/
+      Role: arn:aws:iam::760022212648:role/TodoAppLambdaRole
+      Environment:
+        Variables:
+          TODO_TABLE: !Ref TodosTableName
+          ALLOWED_ORIGIN: !Ref AllowedOriginParam
+      Events:
+        GetTodoApi:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref MainHttpApi
+            Path: /{userID}/todos/{todoID}
+            Method: GET
+      
+
+  ##############################################################
+  # ADD TODO (POST /{userID}/todos)
+  ##############################################################
+  AddTodoFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: addTodo.lambda_handler
+      CodeUri: functions/
+      Role: arn:aws:iam::760022212648:role/TodoAppLambdaRole
+      Environment:
+        Variables:
+          TODO_TABLE: !Ref TodosTableName
+          ALLOWED_ORIGIN: !Ref AllowedOriginParam
+      Events:
+        AddTodoApi:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref MainHttpApi
+            Path: /{userID}/todos/add
+            Method: POST
+      
+
+  ##############################################################
+  # UPDATE NOTES (Post /{userID}/todos/{todoID}/notes)
+  ##############################################################
+  AddTodoNotesFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: addTodoNotes.lambda_handler
+      CodeUri: functions/
+      Role: arn:aws:iam::760022212648:role/TodoAppLambdaRole
+      Environment:
+        Variables:
+          TODO_TABLE: !Ref TodosTableName
+          ALLOWED_ORIGIN: !Ref AllowedOriginParam
+      Events:
+        AddNotesApi:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref MainHttpApi
+            Path: /{userID}/todos/{todoID}/addnotes
+            Method: POST
+      
+
+  ##############################################################
+  # COMPLETE TODO (Post /{userID}/todos/{todoID}/complete)
+  ##############################################################
+  CompleteTodoFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: completeTodo.lambda_handler
+      CodeUri: functions/
+      Role: arn:aws:iam::760022212648:role/TodoAppLambdaRole
+      Environment:
+        Variables:
+          TODO_TABLE: !Ref TodosTableName
+          ALLOWED_ORIGIN: !Ref AllowedOriginParam
+      Events:
+        CompleteApi:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref MainHttpApi
+            Path: /{userID}/todos/{todoID}/complete
+            Method: POST
+      
+
+  ##############################################################
+  # DELETE TODO  (DELETE /{userID}/todos/{todoID})
+  ##############################################################
+  DeleteTodoFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: deleteTodo.lambda_handler
+      CodeUri: functions/
+      Role: arn:aws:iam::760022212648:role/TodoAppLambdaRole
+      Environment:
+        Variables:
+          TODO_TABLE: !Ref TodosTableName
+          TODOFILES_BUCKET: !Ref FilesBucketName
+          TODOFILES_TABLE: !Ref FilesTableName
+          ALLOWED_ORIGIN: !Ref AllowedOriginParam
+      Events:
+        DeleteTodoApi:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref MainHttpApi
+            Path: /{userID}/todos/{todoID}/delete
+            Method: DELETE
+
+
+
+###############################################################
+Outputs:
+  ApiUrl:
+    Value: !Sub "https://${MainHttpApi}.execute-api.${AWS::Region}.amazonaws.com/dev"
+    Export:
+      Name: !Sub "${AWS::StackName}-ApiUrl"
+  

@@ -1,0 +1,126 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: "Attachments service for todo application (NO CDN VERSION)"
+
+Globals:
+  Function:
+    Runtime: python3.12
+    Timeout: 10
+    MemorySize: 128
+    Environment:
+      Variables:
+        ALLOWED_ORIGIN: "https://d2wjdko2jskle3.cloudfront.net"
+
+Parameters:
+  AllowedOriginParam:
+    Type: String
+    Default: "https://d2wjdko2jskle3.cloudfront.net"
+  # database table name
+  FilesTableName:
+    Type: String
+  FilesBucketName:
+    Type: String
+  CloudFrontDomainName:
+    Type: String
+  # Cognito User Pool và Client ID 
+  SharedUserPoolId:
+    Type: String
+  SharedUserPoolClientId:
+    Type: String
+
+Resources:
+  # ---------------------------------------------------
+  # 1. API GATEWAY (Giữ nguyên)
+  # ---------------------------------------------------
+  FilesApi:
+    Type: AWS::Serverless::HttpApi
+    Properties:
+      StageName: dev
+      Auth:
+        Authorizers:
+          TodoAuthorizer:
+            IdentitySource: "$request.header.Authorization"
+            JwtConfiguration:
+              issuer:
+                !Sub
+                  - "https://cognito-idp.${AWS::Region}.amazonaws.com/${UserPoolID}"
+                  - UserPoolID: !Ref SharedUserPoolId
+              audience:
+                - !Ref SharedUserPoolClientId
+        DefaultAuthorizer: TodoAuthorizer
+      CorsConfiguration:
+        AllowOrigins:
+          - !Ref AllowedOriginParam
+        AllowMethods: [GET, POST, DELETE, PUT, HEAD]
+        AllowHeaders: ["*"]
+  
+
+  # ---------------------------------------------------
+  # 4. FUNCTIONS (Đã bỏ biến môi trường CDN)
+  # ---------------------------------------------------
+  GetTodoFilesFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: functions/
+      Handler: getTodoFiles.lambda_handler
+      Role: arn:aws:iam::760022212648:role/TodoAppLambdaRole
+      Environment:
+        Variables:
+          TODOFILES_TABLE: !Ref FilesTableName
+      Events:
+        ApiEvent:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref FilesApi
+            Path: /{todoID}/files
+            Method: GET
+
+  AddTodoFilesFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: functions/
+      Handler: addTodoFiles.lambda_handler
+      Role: arn:aws:iam::760022212648:role/TodoAppLambdaRole
+      Environment:
+        Variables:
+          TODOFILES_TABLE: !Ref FilesTableName
+          TODOFILES_BUCKET: !Ref FilesBucketName
+          TODOFILES_BUCKEET_CDN: !Ref CloudFrontDomainName
+          ALLOWED_ORIGINS: !Ref AllowedOriginParam
+      Events:
+        ApiEvent:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref FilesApi
+            Path: /{todoID}/files/upload
+            Method: POST
+
+  DeleteFileFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: functions/
+      Handler: deleteTodoFile.lambda_handler
+      Role: arn:aws:iam::760022212648:role/TodoAppLambdaRole
+      Environment:
+        Variables:
+          TODOFILES_TABLE: !Ref FilesTableName
+          TODOFILES_BUCKET: !Ref FilesBucketName
+          TODOFILES_BUCKET_CDN: !Ref CloudFrontDomainName
+          ALLOWED_ORIGINS: !Ref AllowedOriginParam
+      Events:
+        ApiEvent:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref FilesApi
+            Path: /{todoID}/files/{fileID}/delete
+            Method: DELETE
+
+Outputs:
+  FilesApiURL:
+    Value: !Sub "https://${FilesApi}.execute-api.${AWS::Region}.amazonaws.com/dev"
+    Export:
+      Name: !Sub "${AWS::StackName}-FilesApiURL"
+
+  
+  
+  # Xóa Export CDN, chỉ giữ lại mấy cái cần thiết cho Main Service
