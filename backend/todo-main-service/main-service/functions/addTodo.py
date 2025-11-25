@@ -18,7 +18,8 @@ def lambda_handler(event, context):
 
     body = json.loads(event['body'])
     try:
-        userID = event["requestContext"]["authorizer"]["jwt"]["claims"]["sub"]
+        path_params = event.get("pathParameters", {})
+        userID = path_params.get("userID")
     except (KeyError, TypeError):
         userID = "test-user" # hoặc raise error
 

@@ -73,8 +73,19 @@ function addFileName () {
 }      
 
 function applyGridScope(todosList) {
-    gridScope.todos = todosList;
-    gridScope.$apply();
+    // Kiểm tra log để chắc chắn dữ liệu vào đến đây
+    console.log("Applying todos to scope:", todosList);
+    
+    if(gridScope) {
+        // Dùng $timeout để ép chạy trong digest cycle tiếp theo (An toàn hơn $apply)
+        setTimeout(function() {
+            gridScope.$apply(function() {
+                gridScope.todos = todosList;
+            });
+        }, 0);
+    } else {
+        console.error("gridScope is undefined! Angular controller might not be initialized.");
+    }
 }
 
 function applyFilesScope(filesList) {
@@ -380,7 +391,7 @@ function getTodo(todoID, callback) {
     headers : {'Authorization' : idJwt },
     success : function(response) {
         console.log('todoID: ' + todoID);
-        callback(response);
+        callback(response.item);
         getTodoFiles(todoID, applyFilesScope);
     },
     error : function(response) {
@@ -589,37 +600,87 @@ function uploadTodoFileS3(todoID, bucket, filesToUp, callback){
 }
 
 function addTodoFiles(todoID, files, callback) {
-    var userPoolId = localStorage.getItem('userPoolId');
-    var clientId = localStorage.getItem('clientId');
-    var identityPoolId = localStorage.getItem('identityPoolId');
-    var loginPrefix = localStorage.getItem('loginPrefix');
-
-    try{
-        // ĐÃ SỬA: Dùng CONFIG.REGION và CONFIG.COGNITO_IDENTITY_POOL_ID
-        AWS.config.update({
-            region: CONFIG.REGION,
-            credentials: new AWS.CognitoIdentityCredentials({
-                IdentityPoolId: CONFIG.COGNITO_IDENTITY_POOL_ID
-            })
-        });
-        var s3 = new AWS.S3({
-            apiVersion: '2006-03-01',
-            // ĐÃ SỬA: Dùng CONFIG.S3_BUCKET
-            params: {Bucket: CONFIG.S3_BUCKET}
-        });
-        uploadTodoFileS3(todoID, s3, files, callback);
-
-    }
-    catch(err) {
-        //alert("You must be logged in to add todo attachment");
+    // Không cần cấu hình AWS SDK hay Identity Pool ở đây nữa
+    try {
+        uploadTodoFileS3(todoID, files, callback);
+    } catch (err) {
         console.log(err.message);
     }
+}
+
+function uploadTodoFileS3(todoID, filesToUp, callback) {
+    if (!filesToUp.length) {
+        alert("You need to choose a file to upload.");
+        return;
+    }
+
+    var file = filesToUp[0];
+    var fileName = file.name;
+    var sizeInKB = file.size / 1024;
+
+    console.log('Uploading file: ' + fileName + ' (' + sizeInKB + ' KB)');
+
+    if (sizeInKB > 2048) {
+        alert("File size exceeds the limit of 2MB.");
+        return;
+    }
+
+    // Lấy Token
+    var sessionTokensString = localStorage.getItem('sessionTokens');
+    var sessionTokens = JSON.parse(sessionTokensString);
+    var idJwt = sessionTokens.IdToken.jwtToken;
+
+    // BƯỚC 1: Gọi API Backend để lấy Presigned URL
+    var todoFilesApi = CONFIG.FILES_API_BASE_URL + todoID + "/files/upload";
+
+    $.ajax({
+        url: todoFilesApi,
+        type: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': idJwt
+        },
+        data: JSON.stringify({
+            'fileName': fileName
+        }),
+        success: function(response) {
+            console.log("Got Presigned URL from Backend");
+            var uploadURL = response.uploadURL; // Link để upload (PUT)
+            
+            // BƯỚC 2: Upload file binary lên S3 bằng link vừa nhận được
+            $.ajax({
+                url: uploadURL,
+                type: 'PUT',
+                data: file, // Gửi thẳng file binary
+                processData: false, // Bắt buộc: Không xử lý data
+                contentType: file.type, // Bắt buộc: Giữ nguyên loại file
+                success: function() {
+                    console.log("Upload to S3 successful!");
+                    // Gọi callback để refresh lại danh sách file
+                    callback(todoID, applyFilesScope);
+                    hideAddFilesForm();
+                },
+                error: function(err) {
+                    console.log("Error uploading to S3:", err);
+                    alert("Failed to upload file content to S3");
+                }
+            });
+        },
+        error: function(response) {
+            console.log("Could not get upload URL");
+            if (response.status == "401") {
+                refreshAWSCredentials();
+            } else {
+                alert("Backend Error: " + JSON.stringify(response));
+            }
+        }
+    });
 }
 
 function getTodoFiles(todoID, callback) {
     try{
         // ĐÃ SỬA: Dùng CONFIG.API_BASE_URL
-        var todoFilesApi = CONFIG.API_BASE_URL  + todoID + '/files';
+        var todoFilesApi = CONFIG.FILES_API_BASE_URL  + todoID + '/files';
         var sessionTokensString = localStorage.getItem('sessionTokens');
         var sessionTokens = JSON.parse(sessionTokensString);
         var IdToken = sessionTokens.IdToken;
@@ -648,7 +709,7 @@ function getTodoFiles(todoID, callback) {
 function deleteTodoFile(todoID, fileID, filePath, callback) {
     try{
         // ĐÃ SỬA: Dùng CONFIG.API_BASE_URL
-        var todoFilesApi = CONFIG.API_BASE_URL  + todoID + '/files/' + fileID + '/delete' ;
+        var todoFilesApi = CONFIG.FILES_API_BASE_URL  + todoID + '/files/' + fileID + '/delete' ;
         var sessionTokensString = localStorage.getItem('sessionTokens');
         var sessionTokens = JSON.parse(sessionTokensString);
         var IdToken = sessionTokens.IdToken;

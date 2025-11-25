@@ -15,15 +15,21 @@ bucket = s3.Bucket(os.environ["TODOFILES_BUCKET"])
 
 ALLOWED_ORIGIN = os.environ.get("ALLOWED_ORIGIN", "*")
 
+    
 def delete_todo_files_s3(userID, todoID):
     # Xoa tat ca file trong S3: userID/todoID/*
 
     prefix = f"{userID}/{todoID}/"
 
+    logger.info(userID)
+
     for obj in bucket.objects.filter(Prefix=prefix):
         logger.info(f"Deleting S3 object: {obj.key}")
         obj.delete()
     return f"{todoID} files deleted from S3"
+
+
+
 
 def delete_todo_files_dynamo(todoID):
     # Xoa tat ca file trong DynamoDB: todoID
@@ -58,8 +64,12 @@ def lambda_handler(event, context):
         todoID = event["pathParameters"]["todoID"]
         userID = event["pathParameters"]["userID"]
 
+        user_id = event["requestContext"]["authorizer"]["jwt"]["claims"]["sub"]
+
+
+        
         # Delete files from S3
-        delete_todo_files_s3(userID, todoID)
+        delete_todo_files_s3(user_id, todoID)
 
         # Delete files from DynamoDB
         delete_todo_files_dynamo(todoID)

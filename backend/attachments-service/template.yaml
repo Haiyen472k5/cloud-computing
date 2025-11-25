@@ -7,9 +7,6 @@ Globals:
     Runtime: python3.12
     Timeout: 10
     MemorySize: 128
-    Environment:
-      Variables:
-        ALLOWED_ORIGIN: "https://d2wjdko2jskle3.cloudfront.net"
 
 Parameters:
   AllowedOriginParam:
@@ -49,7 +46,7 @@ Resources:
                 - !Ref SharedUserPoolClientId
         DefaultAuthorizer: TodoAuthorizer
       CorsConfiguration:
-        AllowOrigins:
+        AllowOrigins: 
           - !Ref AllowedOriginParam
         AllowMethods: [GET, POST, DELETE, PUT, HEAD]
         AllowHeaders: ["*"]
@@ -85,7 +82,7 @@ Resources:
         Variables:
           TODOFILES_TABLE: !Ref FilesTableName
           TODOFILES_BUCKET: !Ref FilesBucketName
-          TODOFILES_BUCKEET_CDN: !Ref CloudFrontDomainName
+          TODOFILES_BUCKET_CDN: !Ref CloudFrontDomainName
           ALLOWED_ORIGINS: !Ref AllowedOriginParam
       Events:
         ApiEvent:

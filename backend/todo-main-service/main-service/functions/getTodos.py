@@ -57,7 +57,7 @@ def  lambda_handler(event, context):
             },
             "body": json.dumps({
                 "status": "success",
-                "items": items
+                "todos": items
             })
         }
 

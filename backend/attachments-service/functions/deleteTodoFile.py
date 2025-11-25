@@ -16,6 +16,16 @@ BUCKET = os.environ["TODOFILES_BUCKET"]
 CDN_DOMAIN = os.environ.get("TODOFILES_BUCKET_CDN")
 ALLOWED_ORIGINS = os.environ.get("ALLOWED_ORIGINS", "*")
 
+def error(message, status_code=500):
+    return {
+        "statusCode": status_code,
+        "headers": {
+            "Access-Control-Allow-Origin": ALLOWED_ORIGINS,
+            "Content-Type": "application/json"
+        },
+        "body": json.dumps({"error": message})
+    }
+
 def lambda_handler(event, context):
     logger.info(event)
 
@@ -94,12 +104,3 @@ def lambda_handler(event, context):
         })
     }
 
-def error(message, status_code=500):
-    return {
-        "statusCode": status_code,
-        "headers": {
-            "Access-Control-Allow-Origin": ALLOWED_ORIGINS,
-            "Content-Type": "application/json"
-        },
-        "body": json.dumps({"error": message})
-    }
