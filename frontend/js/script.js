@@ -620,8 +620,8 @@ function uploadTodoFileS3(todoID, filesToUp, callback) {
 
     console.log('Uploading file: ' + fileName + ' (' + sizeInKB + ' KB)');
 
-    if (sizeInKB > 2048) {
-        alert("File size exceeds the limit of 2MB.");
+    if (sizeInKB > 5120) {
+        alert("File size exceeds the limit of 5MB.");
         return;
     }
 
