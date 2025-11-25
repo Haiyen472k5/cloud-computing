@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Register - TodoHouessou</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="shortcut icon" href="favicon.png" >
+</head>
+<body>
+    <div class="container-fluid" style="text-align: center">
+        <a class="navbar-brand" href="#">
+            <img src="img/logo.png" id="logo" align="center"/>
+            <b id="brand-title"></b>
+        </a>
+    </div>
+    
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4 offset-md-4">
+                <h2 class="text-center signin-title">Register</h2>
+                <form id="userDetails" onsubmit="return false;"> 
+                    <div class="form-group input-field">
+                        <label for="email">Email</label>
+                        <input type="email" class="form-control rounded-0" name="email" id="email"aria-describedby="emailHelp" placeholder="Your email">
+                    </div>
+                    <div class="form-group input-field">
+                        <label for="pwd">Password</label>
+                        <input type="password" class="form-control rounded-0" name="pwd" id="pwd" placeholder="Your password">
+                    </div>
+                    <div class="form-group input-field">
+                        <label for="confirmPwd">Confirm Password</label>
+                        <input type="password" class="form-control rounded-0" name="confirmPwd" id="confirmPwd" placeholder="Confirm password">
+                    </div>
+                    <button class="btn btn-custom signin" onclick="register();">Register</button>
+                </form> 
+            </div>
+        </div>
+    </div>  
+</body>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+
+<script src="https://sdk.amazonaws.com/js/aws-sdk-2.135.0.min.js"></script>
+<script src="js/aws-cognito-sdk.min.js"></script> <script src="js/amazon-cognito-identity.min.js"></script>
+
+<script src="js/config.js"></script> <script src="js/script.js"></script>
+</html>
