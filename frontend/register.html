@@ -5,48 +5,184 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Register - TodoHouessou</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css">
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="shortcut icon" href="favicon.png" >
+    
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .register-card {
+            background: #ffffff;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            width: 100%;
+            max-width: 500px; /* Rộng hơn một chút so với trang login */
+            padding: 40px;
+            margin: 20px;
+        }
+
+        .brand-section {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .brand-logo {
+            height: 50px;
+            margin-bottom: 15px;
+        }
+
+        .brand-title {
+            font-weight: 600;
+            color: #333;
+            font-size: 1.4rem;
+        }
+
+        .register-subtitle {
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+
+        .form-group label {
+            font-weight: 500;
+            color: #555;
+            font-size: 0.9rem;
+            margin-bottom: 5px;
+        }
+
+        .input-group-text {
+            background: #f8f9fa;
+            border-right: none;
+            border-radius: 10px 0 0 10px;
+            color: #764ba2;
+            width: 45px;
+            justify-content: center;
+        }
+
+        .form-control {
+            border-left: none;
+            border-radius: 0 10px 10px 0;
+            height: 45px;
+            font-size: 0.95rem;
+        }
+
+        .form-control:focus {
+            box-shadow: none;
+            border-color: #ced4da;
+        }
+
+        .input-group:focus-within .input-group-text,
+        .input-group:focus-within .form-control {
+            border-color: #764ba2;
+        }
+
+        .btn-custom {
+            background: linear-gradient(to right, #667eea, #764ba2);
+            border: none;
+            border-radius: 10px;
+            height: 45px;
+            font-weight: 600;
+            font-size: 1rem;
+            color: white;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(118, 75, 162, 0.3);
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .btn-custom:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(118, 75, 162, 0.4);
+            background: linear-gradient(to right, #764ba2, #667eea);
+            color: white;
+        }
+
+        .login-link {
+            text-align: center;
+            margin-top: 25px;
+            font-size: 0.9rem;
+            color: #6c757d;
+        }
+
+        .login-link a {
+            color: #764ba2;
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        .login-link a:hover {
+            text-decoration: underline;
+        }
+    </style>
 </head>
 <body>
-    <div class="container-fluid" style="text-align: center">
-        <a class="navbar-brand" href="#">
-            <img src="img/logo.png" id="logo" align="center"/>
-            <b id="brand-title"></b>
-        </a>
-    </div>
-    
-    <div class="container">
-        <div class="row">
-            <div class="col-md-4 offset-md-4">
-                <h2 class="text-center signin-title">Register</h2>
-                <form id="userDetails" onsubmit="return false;"> 
-                    <div class="form-group input-field">
-                        <label for="email">Email</label>
-                        <input type="email" class="form-control rounded-0" name="email" id="email"aria-describedby="emailHelp" placeholder="Your email">
-                    </div>
-                    <div class="form-group input-field">
-                        <label for="pwd">Password</label>
-                        <input type="password" class="form-control rounded-0" name="pwd" id="pwd" placeholder="Your password">
-                    </div>
-                    <div class="form-group input-field">
-                        <label for="confirmPwd">Confirm Password</label>
-                        <input type="password" class="form-control rounded-0" name="confirmPwd" id="confirmPwd" placeholder="Confirm password">
-                    </div>
-                    <button class="btn btn-custom signin" onclick="register();">Register</button>
-                </form> 
-            </div>
+
+    <div class="register-card">
+        <div class="brand-section">
+            <a href="index.html">
+                <img src="img/logo.png" alt="Logo" class="brand-logo" onerror="this.style.display='none'"/>
+            </a>
+            <h3 id="brand-title" class="brand-title">Create Account</h3>
+            <p class="register-subtitle">Join TodoHouessou to manage your tasks efficiently</p>
         </div>
-    </div>  
+        
+        <form id="userDetails" onsubmit="return false;"> 
+            <div class="form-group">
+                <label for="email">Email Address</label>
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+                    </div>
+                    <input type="email" class="form-control" name="email" id="email" aria-describedby="emailHelp" placeholder="you@example.com" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="pwd">Password</label>
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                    </div>
+                    <input type="password" class="form-control" name="pwd" id="pwd" placeholder="Create a password" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="confirmPwd">Confirm Password</label>
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text"><i class="fas fa-check-circle"></i></span>
+                    </div>
+                    <input type="password" class="form-control" name="confirmPwd" id="confirmPwd" placeholder="Confirm your password" required>
+                </div>
+            </div>
+
+            <button class="btn btn-custom signin" onclick="register();">Register</button>
+            
+            <div class="login-link">
+                Already have an account? <a href="index.html">Sign In</a>
+            </div>
+        </form> 
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+
+    <script src="https://sdk.amazonaws.com/js/aws-sdk-2.135.0.min.js"></script>
+    <script src="js/aws-cognito-sdk.min.js"></script> 
+    <script src="js/amazon-cognito-identity.min.js"></script>
+
+    <script src="js/config.js"></script> 
+    <script src="js/script.js"></script>
 </body>
-
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
-
-<script src="https://sdk.amazonaws.com/js/aws-sdk-2.135.0.min.js"></script>
-<script src="js/aws-cognito-sdk.min.js"></script> <script src="js/amazon-cognito-identity.min.js"></script>
-
-<script src="js/config.js"></script> <script src="js/script.js"></script>
 </html>

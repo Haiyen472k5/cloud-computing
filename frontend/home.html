@@ -5,157 +5,475 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Home - TodoHouessou</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css">
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="shortcut icon" href="favicon.png" >
+    
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f4f7f6;
+            color: #333;
+        }
+
+        /* Navbar Styling */
+        .navbar-custom {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            padding: 15px 0;
+        }
+        
+        .navbar-brand #brand-title {
+            color: white;
+            font-weight: 600;
+        }
+        
+        .navbar-brand img {
+            background: rgba(255,255,255,0.2);
+            padding: 5px;
+            border-radius: 50%;
+            height: 45px;
+        }
+
+        /* --- SỬA LẠI PHẦN TOOLBAR (ĐẨY XUỐNG DƯỚI) --- */
+        .toolbar-container {
+            background: white;
+            padding: 20px; 
+            border-radius: 15px;
+            /* Đổi từ số âm sang số dương để đẩy xuống dưới Header */
+            margin-top: 30px; 
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+            margin-bottom: 30px;
+            
+            /* Flexbox để căn chỉnh thẳng hàng */
+            display: flex;
+            align-items: center; 
+            justify-content: space-between; 
+            flex-wrap: wrap; 
+            gap: 15px;
+        }
+
+        .toolbar-left {
+            display: flex;
+            align-items: center;
+            flex-grow: 1;
+            max-width: 600px;
+            width: 100%;
+        }
+
+        .search-box-wrapper {
+            display: flex;
+            align-items: center;
+            flex-grow: 1;
+            margin-right: 15px;
+        }
+
+        #searchTodosFilter {
+            border-radius: 20px 0 0 20px;
+            border: 1px solid #e0e0e0;
+            border-right: none;
+            height: 45px;
+            padding-left: 20px;
+            width: 100%;
+        }
+        
+        #searchTodosFilter:focus {
+            box-shadow: none;
+            border-color: #667eea;
+        }
+
+        #searchTodosButton {
+            border-radius: 0 20px 20px 0;
+            background: #667eea;
+            color: white;
+            border: 1px solid #667eea;
+            height: 45px;
+            width: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        #showAllTodosButton {
+            border-radius: 20px;
+            height: 45px;
+            border: 1px solid #ddd;
+            background: #fff;
+            color: #555;
+            padding: 0 20px;
+            white-space: nowrap;
+            font-weight: 500;
+        }
+        
+        #showAllTodosButton:hover {
+            background: #f1f1f1;
+        }
+
+        .toolbar-right {
+            flex-shrink: 0;
+        }
+
+        .btn-add-new {
+            background: linear-gradient(to right, #667eea, #764ba2);
+            color: white;
+            border: none;
+            height: 45px;
+            padding: 0 25px;
+            border-radius: 25px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 10px rgba(102, 126, 234, 0.4);
+            transition: transform 0.2s;
+        }
+        
+        .btn-add-new:hover {
+            transform: translateY(-2px);
+            color: white;
+        }
+
+        /* Todo Cards */
+        .todo-card {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: none;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            transition: transform 0.2s, box-shadow 0.2s;
+            height: 100%;
+        }
+
+        .todo-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+        }
+
+        .todo-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #444;
+            margin-bottom: 10px;
+        }
+
+        .todo-desc {
+            color: #777;
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+            display: block;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .todo-date {
+            font-size: 0.8rem;
+            color: #999;
+            margin-bottom: 15px;
+        }
+
+        .btn-detail-custom {
+            width: 100%;
+            background: #f0f2f5;
+            color: #667eea;
+            font-weight: 500;
+            border: none;
+            border-radius: 8px;
+        }
+        
+        .btn-detail-custom:hover {
+            background: #e4e6eb;
+            color: #764ba2;
+        }
+
+        /* Chat UI */
+        .chat-tab {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            overflow: hidden;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+            cursor: pointer;
+            z-index: 1000;
+            background: white;
+        }
+        
+        .chat-container {
+            position: fixed;
+            bottom: 100px;
+            right: 30px;
+            width: 320px;
+            height: 400px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 30px rgba(0,0,0,0.15);
+            z-index: 999;
+            display: none;
+            flex-direction: column;
+            border: 1px solid #eee;
+        }
+
+        /* Khi có class active thì mới hiện */
+        .chat-container.active {
+            display: flex;
+        }
+
+        .messages {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding: 15px;
+            background: #fafafa;
+        }
+
+        .chat-input {
+            padding: 10px;
+            border-top: 1px solid #eee;
+            display: flex;
+        }
+
+        .chat-input input {
+            flex-grow: 1;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            padding: 5px 15px;
+            outline: none;
+        }
+
+        .chat-input button {
+            background: #764ba2;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 35px;
+            height: 35px;
+            margin-left: 5px;
+        }
+
+        /* Modals */
+        .modal-content {
+            border-radius: 15px;
+            border: none;
+        }
+        .modal-header {
+            background: #f8f9fa;
+            border-radius: 15px 15px 0 0;
+        }
+        .file-item {
+            background: #f1f3f4;
+            padding: 5px 10px;
+            border-radius: 15px;
+            display: inline-block;
+            margin: 2px;
+            font-size: 0.9rem;
+        }
+        .deleteFileButton {
+            border: none;
+            background: transparent;
+            color: #dc3545;
+            cursor: pointer;
+        }
+    </style>
 </head>
 <body id="body" style="visibility:visible" ng-app="todosApp">
 
-    <div class="container-fluid" style="text-align: center">
-        <a class="navbar-brand" href="#">
-            <img src="img/logo.png" id="logo" align="center"/>
-            <b id="brand-title"></b>
-        </a>
-    </div>
-    <p>
-      <br>
-      <br>
-    </p>
-
-    <div class="chat-tab">
-      <img src="img/bot-icon.gif" alt="Chat with us!" style="width: 100%; height: 100%;">
-    </div>
-    <div class="chat-container">
-      <div class="messages" id="chatMessages"></div>
-      <div class="chat-input">
-        <input type="text" id="userInput" placeholder="Type a message...">
-        <button onclick="sendMessage()">Send</button>
-      </div>
-    </div>
+    <nav class="navbar navbar-custom">
+        <div class="container d-flex align-items-center justify-content-between">
+            <a class="navbar-brand d-flex align-items-center" href="#">
+                <img src="img/logo.png" id="logo" alt="Logo" onerror="this.style.display='none'"/>
+                <span id="brand-title" class="ml-2 h5 mb-0">TodoHouessou</span>
+            </a>
+            
+            <div>
+                 <button type="button" id="signInButton" class="btn btn-light btn-sm d-none" onclick="logOut();">
+                    <i class="fas fa-sign-in-alt"></i> Sign in
+                </button>
+                <button type="button" id="signOutButton" class="btn btn-outline-light btn-sm" onclick="logOut();">
+                    <i class="fas fa-sign-out-alt"></i> Sign out
+                </button>
+            </div>
+        </div>
+    </nav>
 
     <div class="container">
-      <div class='btn-toolbar float-left'>
-        <input type="text" id="searchTodosFilter" placeholder="Search todo.." name="searchTodo">
-        <button type="button" id="searchTodosButton" ng-controller="todosListController" ng-click="searchTodosClicked()" class="btn btn-outline-light btn-sm"><img src="img/search.png" title="search" id="search-img"/></button>
-        &nbsp;
-        <button type="button" id="showAllTodosButton" ng-controller="todosListController" ng-click="showAllTodosClicked()" class="btn btn-primary btn-sm">Show All</button>
-      </div>
-      <div class='btn-toolbar float-right'>
-          <button type="button" id="addTodoButton" class="btn btn-success btn-nav" data-toggle="modal" data-target="#newTodoModal">New todo</button>
-          &nbsp;
-          <button type="button" id="signOutButton" class="btn btn-dark btn-nav" onclick="logOut();">Sign out</button>
-          <button type="button" id="signInButton" class="btn btn-sm btn-nav d-none" onclick="logOut();">Sign in</button>
-      </div>
-    </div>
-    <br> 
-    <br>
-    <div class="container">
+        
+        <div class="toolbar-container">
+            
+            <div class="toolbar-left">
+                <div class="search-box-wrapper">
+                    <input type="text" id="searchTodosFilter" placeholder="Search todo..." name="searchTodo">
+                    <button type="button" id="searchTodosButton" ng-controller="todosListController" ng-click="searchTodosClicked()">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+                
+                <button type="button" id="showAllTodosButton" ng-controller="todosListController" ng-click="showAllTodosClicked()">
+                    Show All
+                </button>
+            </div>
+            
+            <div class="toolbar-right">
+                <button type="button" id="addTodoButton" class="btn-add-new" data-toggle="modal" data-target="#newTodoModal">
+                    <i class="fas fa-plus mr-2"></i> New todo
+                </button>
+            </div>
+
+        </div>
+    
         <div id="todosGrid" class="row" ng-controller="todosListController">
-          <div class="col-md-4 border border-info" ng-repeat="todo in todos">
-              <br>
-                <p align="center">
-                    <strong> {{todo.title}}</strong>
-                    <br>
-                    {{todo.description}}
-                    <br>
-                    <b>Due Date:</b> {{todo.dateDue}}
-                    <br>
-                    <button type="button" class="btn btn-sm" data-toggle="modal" data-target="#descriptionModal" data-todoid="{{todo.todoID}}">Details</button>
-                    <br>
-                </p>
-              <br>
-          </div>
+            <div class="col-md-4 col-sm-6" ng-repeat="todo in todos">
+                <div class="todo-card">
+                    <div class="text-center">
+                        <h5 class="todo-title">{{todo.title}}</h5>
+                        <p class="todo-desc">{{todo.description}}</p>
+                        <div class="todo-date">
+                            <i class="far fa-calendar-alt"></i> Due: {{todo.dateDue}}
+                        </div>
+                        
+                        <button type="button" class="btn btn-detail-custom btn-sm" data-toggle="modal" data-target="#descriptionModal" data-todoid="{{todo.todoID}}">
+                            Details
+                        </button>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
    
+    <div class="chat-tab" title="Chat with us!">
+        <img src="img/bot-icon.gif" alt="Chat" style="width: 100%; height: 100%; object-fit: cover;">
+    </div>
+    
+    <div class="chat-container">
+        <div class="modal-header bg-primary text-white py-2">
+            <h6 class="mb-0"><i class="fas fa-robot"></i> Assistant</h6>
+        </div>
+        <div class="messages" id="chatMessages"></div>
+        <div class="chat-input">
+            <input type="text" id="userInput" placeholder="Type a message...">
+            <button onclick="sendMessage()"><i class="fas fa-paper-plane"></i></button>
+        </div>
+    </div>
+
     <div class="modal fade bd-example-modal-lg" id="descriptionModal" tabindex="-1" aria-hidden="true" ng-controller="todoDescriptionController">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h4><img src="img/to-do-list.png" title="todo" id="todo-img"/> {{descriptionTodo.title}}</h4>
-            <button type="button" class="close" data-dismiss="modal">
-              <span aria-hidden="true">&times;</span>
-              <span class="sr-only">Close</span>
-            </button>
-          </div>
-        <div class="modal-body">
-            <p id="descriptionDescription"><b>Description</b> <br> {{descriptionTodo.description}}</p>
-            <br>
-            <p id="descriptionDateDue"><b>Due Date:</b> {{descriptionTodo.dateDue}}</p>
-            <br>
-            <p id="descriptionDateCreated"><b>Created Date:</b> {{descriptionTodo.dateCreated}}</p>
-            <br>
-            <textarea class="form-control" id="descriptionNotes" >{{descriptionTodo.notes}}</textarea>
-            <div class="row">
-              <div class="col-md-12">
-                  <img src="img/paperclip.png" title="attachments" id="attachments-img"/>
-                  <p id="descriptionAttachements"><b>Attachements</b></p>
-              </div>
-              <br>
-              <div class="container">
-                <div id="todoFilesGrid" class="row" ng-controller="todoFilesListController">
-                  <div class="col-auto" id="{{file.fileID}}" ng-repeat="file in files">
-                        <p align="center">
-                          <a href={{file.filePath}}>{{file.fileName}}</a>
-                          <button class="deleteFileButton" align="center" type="button" ng-click="deleteFileClicked(file.todoID, file.fileID, file.filePath)" class="btn btn-outline-info btn-sm"><img src="img/cross.png" title="deleteFile" id="deleteFile-img"/></button>
-                        </p>
-                  </div>
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <img src="img/to-do-list.png" title="todo" id="todo-img" style="height: 24px;"/> 
+                        {{descriptionTodo.title}}
+                    </h5>
+                    <button type="button" class="close" data-dismiss="modal">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
                 </div>
-              </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <label class="font-weight-bold">Description</label>
+                            <p id="descriptionDescription" class="text-muted">{{descriptionTodo.description}}</p>
+                            
+                            <label class="font-weight-bold mt-3">Notes</label>
+                            <textarea class="form-control" id="descriptionNotes" rows="3">{{descriptionTodo.notes}}</textarea>
+                            <button id="saveNotesButton" type="button" ng-click="saveNotesClicked(descriptionTodo.todoID)" class="btn btn-dark btn-sm mt-2">
+                                <i class="fas fa-save"></i> Save Note
+                            </button>
+                        </div>
+                        <div class="col-md-4 border-left">
+                            <p id="descriptionDateDue"><i class="far fa-clock"></i> <b>Due:</b> {{descriptionTodo.dateDue}}</p>
+                            <p id="descriptionDateCreated"><i class="far fa-calendar-plus"></i> <b>Created:</b> {{descriptionTodo.dateCreated}}</p>
+                            
+                            <hr>
+                            <div class="mb-2">
+                                <img src="img/paperclip.png" title="attachments" id="attachments-img" style="height: 20px;"/>
+                                <b>Attachments</b>
+                            </div>
+                            
+                            <div id="todoFilesGrid" class="row" ng-controller="todoFilesListController">
+                                <div class="col-12" id="{{file.fileID}}" ng-repeat="file in files">
+                                    <div class="file-item mb-1 w-100 d-flex justify-content-between align-items-center">
+                                        <a href={{file.filePath}} target="_blank" class="text-truncate" style="max-width: 80%;">{{file.fileName}}</a>
+                                        <button class="deleteFileButton" type="button" ng-click="deleteFileClicked(file.todoID, file.fileID, file.filePath)">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <button id="showAddFilesButton" type="button" onclick="showAddFilesForm();" class="btn btn-secondary btn-sm btn-block mt-3">
+                                <i class="fas fa-upload"></i> New File
+                            </button>
+                            
+                            <div class="col-sm-auto d-none mt-2 px-0" id="addFilesForm">
+                                <div class="input-group">
+                                    <div class="custom-file">
+                                        <input type="file" class="custom-file-input" id="fileinput" onChange="addFileName();">
+                                        <label class="custom-file-label text-truncate" for="fileinput" id="fileName">Choose...</label>
+                                    </div>
+                                </div>
+                                <button type="button" class="btn btn-primary btn-sm btn-block mt-1" id="uploadButton" ng-click="uploadFileClicked(descriptionTodo.todoID)">Upload</button>
+                            </div> 
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="modal-footer bg-light">
+                    <div class="w-100 d-flex justify-content-between">
+                        <button id="deleteTodoButton" type="button" ng-click="deleteTodoClicked(descriptionTodo.todoID, descriptionTodo.title)" class="btn btn-outline-danger btn-sm">
+                            <i class="fas fa-trash"></i> Delete
+                        </button>
+                        <div>
+                            <button id="completedButton" type="button" ng-click="completedClicked(descriptionTodo.todoID)" class="btn btn-outline-success btn-sm">
+                                <i class="fas fa-check"></i> Mark Completed!
+                            </button>
+                            <button id="alreadyCompletedButton" type="button" class="btn btn-success btn-sm d-none" disabled>
+                                <i class="fas fa-check-double"></i> Completed!
+                            </button>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <p><br></p>
-            <div class="col-sm-auto d-none" id="addFilesForm">
-              <div class="input-group input-group upload-form">
-                  <div class="input-group-prepend">
-                      <span type="button" class="btn btn-custom" id="uploadButton" ng-click="uploadFileClicked(descriptionTodo.todoID)">Upload</span>
-                  </div>
-                  <div class="custom-file">
-                      <input type="file" class="form-control-file input-group" id="fileinput" aria-describedby="fileinput" onChange="addFileName();">
-                      <label class="custom-file-label" for="fileinput" id="fileName">Choose File</label>
-                  </div>
-              </div>
-            </div> 
-          </div>
-          <br>
-          <div class="modal-footer">
-            <button id="saveNotesButton" align="center" type="button" ng-click="saveNotesClicked(descriptionTodo.todoID)" class="btn btn-dark btn-sm">Save</button>
-            <button id="showAddFilesButton" align="center" type="button" onclick="showAddFilesForm();" class="btn btn-secondary btn-sm">New <img src="img/file.png" title="attachments" id="attachments-img"/></button>
-            <div align="center">
-              <button id="completedButton" align="center" type="button" ng-click="completedClicked(descriptionTodo.todoID)" class="btn btn-outline-success btn-sm">Mark Completed!</button>
-              <button id="alreadyCompletedButton" align="center" type="button" class="btn btn-success btn-sm d-none" disabled>Completed!</button>
-            </div>
-            <button id="deleteTodoButton" align="center" type="button" ng-click="deleteTodoClicked(descriptionTodo.todoID, descriptionTodo.title)" class="btn btn-danger btn-sm">Delete</button>
-         </div>
         </div>
-      </div>
-  </div>
-  <div class="modal fade" id="newTodoModal" tabindex="-1" role="dialog" aria-hidden="true">
+    </div>
+
+    <div class="modal fade" id="newTodoModal" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h4><img src="img/new.png" title="todo" id="todo-img"/> Add a new todo</h4>
-              <button type="button" class="close" data-dismiss="modal">
-                <span aria-hidden="true">&times;</span>
-                <span class="sr-only">Close</span>
-              </button>
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <img src="img/new.png" title="todo" id="todo-img" style="height: 24px;"/> Add a new todo
+                    </h5>
+                    <button type="button" class="close" data-dismiss="modal">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="newTodoForm">
+                        <div class="form-group">
+                            <label for="newTodoModalTitle">Title:</label>
+                            <input type="text" class="form-control" id="newTodoModalTitle" name="newTodoModalTitle" required />
+                        </div>
+                        <div class="form-group">
+                            <label for="newTodoModalDateDue">Due date:</label>
+                            <input type="date" class="form-control" id="newTodoModalDateDue" name="newTodoModalDateDue" min="2021-01-01"/>
+                        </div>
+                        <div class="form-group">
+                            <label for="newTodoModalDescription">Description:</label>
+                            <textarea class="form-control" id="newTodoModalDescription" rows="3"></textarea>
+                        </div>
+                        <input type="submit" id="newTodo-modal-button" name="newTodoButton" class="btn btn-success btn-block" value="Add todo!" />
+                    </form>
+                </div>
             </div>
-            <div class="modal-body">
-              <form id="newTodoForm">
-                <label for="newTodoModalTitle">Title: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
-                <input type="text" id ="newTodoModalTitle" name="newTodoModalTitle" placeholder="" required />
-                <br>
-                <label for="newTodoModalDateDue">Due date: &nbsp;&nbsp;</label>
-                <input type="date" id ="newTodoModalDateDue" name="newTodoModalDateDue" min="2021-01-01"/>
-                <br>
-                <label for="newTodoModalDescription">Description:</label>
-                <textarea class="form-control" id="newTodoModalDescription" ></textarea>
-                <br>
-                <input type="submit" id="newTodo-modal-button" name="newTodoButton" class="btn btn-outline-success" value="Add todo!" />
-              </form>
-            </div>
-          </div>
         </div>
-      </div>
+    </div>
+
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
@@ -169,107 +487,107 @@
     <script src="js/config.js"></script>
     <script src="js/script.js"></script>
     
-    <p>
-        <br>
-        <br>
+    <div class="container text-center mt-5 mb-5 text-muted small">
         &nbsp;&nbsp;This site is a sample todo-list app created for training purposes. <a href="https://blogs.houessou.com/sample-todo-app-aws">More details here.</a>
-    </p>
-</body>
-<script>
- 
-    //checkLogin(false, true);
+    </div>
 
-    var app = angular.module('todosApp', []);
-    var gridScope;
-    var descriptionScope;
-    var filesScope;
-    
-    // LƯU Ý: Đoạn code này đang đọc config từ LocalStorage. 
-    // Nếu bạn muốn dùng config.js (như trong hướng dẫn), bạn phải thay thế bằng:
-    // var config = CONFIG;
-    var configString = localStorage.getItem("awsConfig");
-    var config = JSON.parse(configString);
+    <script>
+        //checkLogin(false, true);
 
-    if(config != null) {
-        refreshAWSCredentials();
-        loggedInDisplay();
-    }
-    //... (các hàm JS/Angular Controllers khác) ...
-
-    $("#newTodoForm").submit(function(event) {
-        event.preventDefault();
-        $('#newTodoModal').modal('toggle');
-        var title = document.getElementById('newTodoModalTitle').value;
-        var dateDue = document.getElementById('newTodoModalDateDue').value;
-        var description = document.getElementById('newTodoModalDescription').value;
-        addTodo(dateDue, title, description);
-    });
-
-    $('#descriptionModal').on('show.bs.modal', function (event) {
-        var button = $(event.relatedTarget);
-        var todoID = button.data('todoid');
-        localStorage.setItem('todoID', todoID);
-        getTodo(todoID, updateModalText);
-    });
-
-    $('#descriptionModal').on('hidden.bs.modal', function (event) {
-      hideAddFilesForm();
-    });
-
-    app.controller('todosListController', function($scope) {
-        gridScope = $scope;
-
-        getTodos(applyGridScope);
-
-        $scope.searchTodosClicked = function() {
-          var filter = document.getElementById('searchTodosFilter').value;
-          console.log("Getting searched todos");
-          getSearchedTodos(filter, applyGridScope);
-        }
-
-        $scope.showAllTodosClicked = function(){
-          $("#searchTodosFilter").replaceWith($("#searchTodosFilter").val('').clone(true));
-          getTodos(applyGridScope);
-        }
-    });
-
-    app.controller('todoFilesListController', function($scope) {
-        filesScope = $scope;
-        $scope.deleteFileClicked = function (todoID, fileID, filePath){
-            console.log("deleting file " + fileID)
-            deleteTodoFile(todoID, fileID, filePath, markFileDeleted)
-        }
-    });
-
-    app.controller('todoDescriptionController', function($scope) {
-        descriptionScope = $scope;
-
-        $scope.completedClicked = function(todoID) {
-            console.log("marked as completed: " +  todoID);
-            completeTodo(todoID, markCompleted);
-        }
+        var app = angular.module('todosApp', []);
+        var gridScope;
+        var descriptionScope;
+        var filesScope;
         
-        $scope.saveNotesClicked = function(todoID) {
-            var notes = document.getElementById('descriptionNotes').value + "\n";
-            console.log("notes | " + notes + " | for: " +  todoID);
-            addTodoNotes(todoID, notes);
-            $('#descriptionModal').on('hidden.bs.modal', function(event) {
-                location.reload();
-            });
+        var configString = localStorage.getItem("awsConfig");
+        var config = JSON.parse(configString);
+
+        if(config != null) {
+            refreshAWSCredentials();
+            loggedInDisplay();
         }
 
-        $scope.uploadFileClicked = function(todoID) {
-          var files = document.getElementById('fileinput').files;
-          addTodoFiles(todoID, files, getTodoFiles);
-          //$('#descriptionModal').on('hidden.bs.modal', function(event) {
-            //locatio.reload();
-          //});
+        $("#newTodoForm").submit(function(event) {
+            event.preventDefault();
+            $('#newTodoModal').modal('toggle');
+            var title = document.getElementById('newTodoModalTitle').value;
+            var dateDue = document.getElementById('newTodoModalDateDue').value;
+            var description = document.getElementById('newTodoModalDescription').value;
+            addTodo(dateDue, title, description);
+        });
+
+        $('#descriptionModal').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget);
+            var todoID = button.data('todoid');
+            localStorage.setItem('todoID', todoID);
+            getTodo(todoID, updateModalText);
+        });
+
+        $('#descriptionModal').on('hidden.bs.modal', function (event) {
+          hideAddFilesForm();
+        });
+
+        app.controller('todosListController', function($scope) {
+            gridScope = $scope;
+
+            getTodos(applyGridScope);
+
+            $scope.searchTodosClicked = function() {
+              var filter = document.getElementById('searchTodosFilter').value;
+              console.log("Getting searched todos");
+              getSearchedTodos(filter, applyGridScope);
+            }
+
+            $scope.showAllTodosClicked = function(){
+              $("#searchTodosFilter").replaceWith($("#searchTodosFilter").val('').clone(true));
+              getTodos(applyGridScope);
+            }
+        });
+
+        app.controller('todoFilesListController', function($scope) {
+            filesScope = $scope;
+            $scope.deleteFileClicked = function (todoID, fileID, filePath){
+                console.log("deleting file " + fileID)
+                deleteTodoFile(todoID, fileID, filePath, markFileDeleted)
+            }
+        });
+
+        app.controller('todoDescriptionController', function($scope) {
+            descriptionScope = $scope;
+
+            $scope.completedClicked = function(todoID) {
+                console.log("marked as completed: " +  todoID);
+                completeTodo(todoID, markCompleted);
+            }
+            
+            $scope.saveNotesClicked = function(todoID) {
+                var notes = document.getElementById('descriptionNotes').value + "\n";
+                console.log("notes | " + notes + " | for: " +  todoID);
+                addTodoNotes(todoID, notes);
+                $('#descriptionModal').on('hidden.bs.modal', function(event) {
+                    location.reload();
+                });
+            }
+
+            $scope.uploadFileClicked = function(todoID) {
+              var files = document.getElementById('fileinput').files;
+              addTodoFiles(todoID, files, getTodoFiles);
+            }
+
+            $scope.deleteTodoClicked = function(todoID, title){
+              confirmDeleteTodo(todoID, title);
+            }
+        });
+        
+        function addFileName() {
+            var fileName = document.getElementById("fileinput").files[0].name;
+            var nextSibling = document.getElementById("fileName");
+            nextSibling.innerText = fileName;
         }
 
-        $scope.deleteTodoClicked = function(todoID, title){
-          confirmDeleteTodo(todoID, title);
+        function toggleChat() {
+            $('.chat-container').toggleClass('active');
         }
-    });
-
-</script>
+    </script>
+</body>
 </html>
