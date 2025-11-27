@@ -17,7 +17,7 @@ confirm_changeset = true
 resolve_s3 = true
 s3_prefix = "attachments-service"
 disable_rollback = false
-parameter_overrides = "AllowedOriginParam=\"https://d2wjdko2jskle3.cloudfront.net\" FilesTableName=\"TodoFiles\" FilesBucketName=\"todo-app-group10-backend\" CloudFrontDomainName=\"d2wjdko2jskle3.cloudfront.net\" SharedUserPoolId=\"ap-southeast-1_yZP3iSlwa\" SharedUserPoolClientId=\"6a716ppbifnvnecotqcv8vuoi3\""
+parameter_overrides = "AllowedOriginParam=\"https://d2wjdko2jskle3.cloudfront.net\" FilesTableName=\"TodoFiles\" FilesBucketName=\"todo-app-group10-backend\" CloudFrontDomainName=\"d2fzdjbb741b27.cloudfront.net\" SharedUserPoolId=\"ap-southeast-1_yZP3iSlwa\" SharedUserPoolClientId=\"6a716ppbifnvnecotqcv8vuoi3\""
 image_repositories = []
 
 [default.package.parameters]

@@ -391,8 +391,8 @@
                             </div>
                         </div>
                         <div class="col-md-4 border-left">
-                            <p id="descriptionDateDue"><i class="far fa-clock"></i> <b>Due:</b> {{descriptionTodo.dateDue}}</p>
-                            <p id="descriptionDateCreated"><i class="far fa-calendar-plus"></i> <b>Created:</b> {{descriptionTodo.dateCreated}}</p>
+                            <p id="descriptionDateDue"><i class="far fa-clock"></i> <b>Due:</b> {{descriptionTodo.dateDue | date:'dd/MM/yyyy'}}</p>
+                            <p id="descriptionDateCreated"><i class="far fa-calendar-plus"></i> <b>Created:</b> {{descriptionTodo.dateCreated | date:'dd/MM/yyyy'}}</p>
                             
                             <hr>
                             <div class="mb-2">
