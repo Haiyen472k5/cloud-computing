@@ -381,9 +381,14 @@
                             
                             <label class="font-weight-bold mt-3">Notes</label>
                             <textarea class="form-control" id="descriptionNotes" rows="3">{{descriptionTodo.notes}}</textarea>
-                            <button id="saveNotesButton" type="button" ng-click="saveNotesClicked(descriptionTodo.todoID)" class="btn btn-dark btn-sm mt-2">
-                                <i class="fas fa-save"></i> Save Note
-                            </button>
+                            <div class="d-flex align-items-center mt-2">
+                                <button id="saveNotesButton" type="button" ng-click="saveNotesClicked(descriptionTodo.todoID)" class="btn btn-dark btn-sm">
+                                    <i class="fas fa-save"></i> Save Note
+                                </button>
+                                <span id="saveSuccessMessage" class="ml-2 text-success font-weight-bold" style="display: none;">
+                                    <i class="fas fa-check-circle"></i> Success!
+                                </span>
+                            </div>
                         </div>
                         <div class="col-md-4 border-left">
                             <p id="descriptionDateDue"><i class="far fa-clock"></i> <b>Due:</b> {{descriptionTodo.dateDue}}</p>
@@ -560,6 +565,10 @@
                 var notes = document.getElementById('descriptionNotes').value + "\n";
                 console.log("notes | " + notes + " | for: " +  todoID);
                 addTodoNotes(todoID, notes);
+                $("#saveSuccessMessage").fadeIn();
+                setTimeout(function() {
+                    $("#saveSuccessMessage").fadeOut();
+                }, 2000);
                 $('#descriptionModal').on('hidden.bs.modal', function(event) {
                     location.reload();
                 });
